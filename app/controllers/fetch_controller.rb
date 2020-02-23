@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'open-uri'
 require 'net/http'
 class FetchController < ApplicationController
@@ -11,33 +13,82 @@ class FetchController < ApplicationController
       Secure: 'No',
       HttpOnly: 'No'
     }
-    c = ".AspNet.Cookies=#{cookie_value}; path=/; domain=.itwebapps.grinnell.edu; ASPSESSIONIDQUAADBDQ=HLEKMLGDCDLLNKJCJACNFEEF; path=/; domain=.itwebapps.grinnell.edu; ASPSESSIONIDQUBACADR=KLNCBDPBFJFFCDGDDDMBCOPH; path=/; domain=.itwebapps.grinnell.edu; ASPSESSIONIDQUBACADR=BMNCBDPBLKKGHFLPACBBDPDP; path=/; domain=itwebapps.grinnell.edu; Secure; ASPSESSIONIDQUBACBCQ=BGKLCHAAFMPBDENDAJHGNCIM; path=/; domain=.itwebapps.grinnell.edu; ASPSESSIONIDQWCACADR=HAOLHDFBHPPNEHILFBICJNLA; path=/; domain=.itwebapps.grinnell.edu; FedAuth=QVFBQUFOQ01uZDhCRmRFUmpIb0F3RS9DbCtzQkFBQUFjcnVqUGJZbEJVK3g3bWNYTW9hRkZnQUFBQUFDQUFBQUFBQURaZ0FBd0FBQUFCQUFBQUNKeWl1TTNEODNkUVNEYzJ1WmtWdU9BQUFBQUFTQUFBQ2dBQUFBRUFBQUFKb0V3M1dFV3pQb2NZbjhCSUlPc2taQUFnQUFmdHoyUk84L29TOUU0VFhqeGlVWjc1SmZKcTU3bnpTcVNxK2ZXRVkrZXIwNXhHclFMRHVvZkJyMy9YQS9sUE1HNGF4aXFsVWMwb3FvNWphdTJJb016Q2FRVkNPUE5UUENja2dZUTkxT3RQVFhRMGZ6TFY2ejNuRUIxbzRBZ2hSeHRMVGpHcVRKYTAra3M3YzVLL0owSllVV0dmZlV2UlUwNTlZMVNYNVdBQW9Tb0hKTFlhc0swYkVBZGt3ZitGdVVaWDB2eUdVZ05vNnc1TkZLU3ZSV1BvK1BYTzdCZUsvR0RtNnVoYUY0RlRNY0VLZURDTW5mcWxZaXhNcnJvSnBsSG15Ymc3SHk2SzBRRTFFZlZENjVrMFl2a0FpcitOMkxTVXVVdTdDQmdRVHgyMWtqTmRuL0NtbkpzMVhkNlkzL0t3UHN1K1hTanA2TGRsTzVpdGRUbDN6SndXSVA5SmZsa3B2cnErWGYzbmh6blJMVm5ZZUVPM2lJSk9EWVNIMHYzV0IwbzB2ZDFuVE5pY3BCVnd1ekZ6bkhzZ3RrUTc2V2R0QVBrZlVRQXdUS29KUnpNM0RONGY2QUhZa2VIam5NbWJnMCtiQlFZaEJOWHVwZkV0OU5Tb0F2YzdMRkpBRjU3WW1pMDArQ3FTOGN4UXdDSFphNlBhaEgyc09KTkdOSTVDNG0vcDA3L24wSHFrUXY4MTFWY3NVc09DZ3BmaVRhUys3SmZVTFJLVVRpek5xSllvaEE4dTZjRnlSRVZwL3k2U25kZTVUQ1B6Uk1aY1dBMHZjZHFYcVV1Q1NEVVpyZzFUM3Byd0ZUUVptSXlLQXRsU05YVHNHRFlYSmpJdkV5K3BnTExhRmpWS2RqWWNaVzlJb3Y1bFphbGFWSkRjQzEzRUhMVUpWckFCSkw2TDhoU0lDVWMrd1d4dHBDYmEwRnloWlZyZElyMm9OWm1DUmtwdWdrcWJlelVoTXFsQTA5SktpbEhVeVAxVjBsY2dOK1B4RUM4SlJKTkU2UUFzS0NGQUFBQUhMeXZIWUFVNUJ0Zm1iMEpaK3Y4NkljV3VIQzwvQ29va2llPjwvU2VjdXJpdHlDb250ZXh0VG9rZW4; path=/; domain=.itwebapps.grinnell.edu;"
-    cookie = raw_cookie.map {|b| b.collect {|key,val| "%s=%s" % [key, val]}.join '; '}.join '; '
+    c = '.AspNet.Cookies=C-eEJXdnjY2BrPiNQaTahxqjs-YFBHiEdsR_s97dGtqTRmmgFG8hZGTNzK19rOsJo4u1sHDGVBa3pR3ypKrKsJRHtLRKktkLL9x-9rqlO2DWS8ZxWDqF7cNLBwONkQEuF7EIukHsTDu4NApCcztvnFDwAWm6SketSjtJ6pehpMgiZ--V6XfBoBzGPsG-TvLPkJN5zolITSKF4upXHZJ2jky1x-HreIntH8E88fDoCF3b5YMmpyy36dDvBFN3NE1QXAA-r-KiWvcNnwgzmyRPBJQPrE_r4MROSrrw1x4SwxtWD4f-3MwYEvTMQS-nAPjs7tGeeCdy7GH9JM9A2Rn8Ni_OsuUh5RckxsL6VtO5eUvT4ahHqw-FuCqOx6erJyw95rlMCJ65c3cjXHLxnAwQ7MVDAVQgMfFVu3XBX6afhF-MK--7s5Bc_WwYrxQhFA5AsH66_BG0ehtRyJaL_TzeqFJhdmtYKEui7gHNjEZ7_4zgSXrrdIfRGE-XoMkRJfI_4NoCVJ48bp35i2AsCntx0ZAvHjrl3mh7m2OIN-HWMlZSRhfubTUKY11cAHUHFgQJhG6d0w7TpPMl5iBS6pVtR2yrrNFsT-QUx13ddgSRiWUIK5-EDdU8qb4IiotK3jMNuzAodpCaWRFJDEzuBTS6v9-yr9Ykigf978PwG3YlCyfCPlzUKV3neG5u0RtQeEuJrQ4wXBWWo3UAQG5t1GkVMdmH0hWwZoI2ozfRD8wsJCMU8pidi8tHmI05cQA9G_qp0jgH5Khj5nNIzM9JPqVHYcpbRp91d6CqxHVn0itUkBHjdXD14WNFnltRrlq12rZkPwydnC5ltIaIOCnbyz79vqycmD31vb5PS24EE3L6lsXfA0sK5DVBaNDAtyXdsIVDSUkR2jjXTNuxhyMcncloYVriUf70gwB7xU4Q3RU0n8YEXYkvLyKmJUH6xQ4ki1QNPD5BCl51OIUjQVozAQ6v4T4xTloxuc8lcwN-9Um1j3-vI_f4pfXBVDYLFNrGthPAsSOD2hT0fhd2s9CTBxjh0j3Z1pYu8xIYwPfuKbQ1jiKCOY11LP-Ywr4tbA6tkhWpCXGDLdSbuEjC88rlQFfZh3_96SBRvJE9_H4WtRw3AluEbyXfji1NiA0BB6Ch6zsr0lXfpftLp8P23Y6Nujgpm5uA7-rF9y2JaTTfGvo0L9uNPgB9c-hyBcPpw1uW-Aeu4h12pPg3qcJaFXMc3aSvjZAMlxZC_sw_BASo8Ho8SA4jB7IBQHNDMiCEy9az_OW9uuHBvBD2kFJ_Mtzk2KUU2CGYh3YVcAp0JPEVTLJQ95vI16WlodM5fCfFdRKlFGLYg-JRQX5Ph1mYJFzD42aTmSN7S1AktqeheE5sRY4KRTSLgzz-puqGZ1TTIkotvka5Q9DmwCeT21OkPMRWwaLIjvMyR-n52XRbTwuugd_2_Kg; path=/; domain=.itwebapps.grinnell.edu;'
+    cookie = raw_cookie.map { |b| b.collect { |key, val| format('%s=%s', key, val) }.join '; ' }.join '; '
     # puts cookie
-    data = open('https://itwebapps.grinnell.edu/private/asp/campusdirectory/GCdefault.asp?transmit=true&blackboardref=&LastName=guo&LNameSearch=startswith&FirstName=&FNameSearch=startswith&email=&campusphonenumber=&campusquery=&Homequery=&Department=&Major=&conc=&SGA=&Hiatus=&Gyear=&submit_search=Search',
-      "Cookie" => c,
-      "User-Agent" => "Mozilla/5.0",
-      "Referer" => "https://login.microsoftonline.com/",
-      "Origin" => "https://login.microsoftonline.com").read
+    data = open('https://itwebapps.grinnell.edu/private/asp/campusdirectory/GCdefault.asp?transmit=true&blackboardref=&LastName=hong&LNameSearch=startswith&FirstName=&FNameSearch=startswith&email=&campusphonenumber=&campusquery=&Homequery=&Department=&Major=&conc=&SGA=&Hiatus=&Gyear=&submit_search=Search',
+                'Cookie' => c,
+                'User-Agent' => 'Mozilla/5.0',
+                'Referer' => 'https://login.microsoftonline.com/',
+                'Origin' => 'https://login.microsoftonline.com').read
 
     doc = Nokogiri::HTML(data)
     puts doc.title
-    tag = {};
-    comp = "On Campus ViewUsers may not send anonymous mail, mail with altered headers giving erroneous information, or anonymous files."
+    tag = {}
+    arr = []
+    i = 0
+    comp = 'On Campus ViewUsers may not send anonymous mail, mail with altered headers giving erroneous information, or anonymous files.'
     istext = false
     doc.css('td').each_with_index do |element, index|
-      if istext && (element.text.strip != "New Search")
-        puts "#{index + 1}. #{element.text.strip}"
-        tag[index] = element.text.strip
-      elsif istext && (element.text.strip == "New Search")
+      if istext && (element.text.strip != 'New Search')
+
+        if (i % 8).zero?
+          arr << element
+        else
+          arr[i / 8] << element
+        end
+        i += 1
+        if index == 9
+          tag[9] = getname(element)
+        else
+          tag[index] = element.text.strip
+        end
+
+      elsif istext && (element.text.strip == 'New Search')
         break
       elsif element.text.strip == comp
         istext = true
       end
     end
+
+    # convert the arr into a list of person
     # render data
     render json: {
-      hahah: tag
+      # errMessage: "",
+      # content: [{
+
+      # }]
+      haha: arr.map { |x| x.text.strip }
     }
+  end
+
+  private
+
+  def getname(noko)
+    [noko.text.strip, noko.css('a')[0]['href']]
+  end
+
+  def getmajor(noko)
+    noko.text.strip
+  end
+
+  def getPhone(noko)
+    noko.text.strip
+  end
+
+  def getEmail(noko)
+    noko.text.strip
+  end
+
+  def getAdress(noko)
+    noko.text.strip
+  end
+
+  def getBox(noko)
+    noko.text.strip
+  end
+
+  def getStatus(noko)
+    noko.text.strip
   end
 end
