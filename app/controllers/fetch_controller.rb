@@ -17,7 +17,10 @@ class FetchController < ApplicationController
     # cookie = raw_cookie.map { |b| b.collect { |key, val| format('%s=%s', key, val) }.join '; ' }.join '; '
     c = '.AspNet.Cookies=XBlvDMH0MIFV_93RM5ifieOthWG9okcSItqYs-XQ-_3xOwycaJb67XE_rLujKHZHwiR97OuCuhDp6EHYEwJmW15EZ2he3DoTcyJNmIuvcfCG29HKmYlvvnWmNGYrKN62S0eO37yODt52v7Wuhd-JQSJB4KQ_XlZnG8zV1FbAys6Ce7fe-JbsJJm5FhN5VNOhJva0EhdzyurMOona-qPZVDHJXfiY4dJifANFx7JRLrnVquVBoSeKPvrwFxsgdUaCGR2OIH-vvLdidW7RA7KUsPy0asjzNs3_dRyBP8xl5wPfk7o_MV5F_cquTXfklEWfN2Ss3hYLaJqFn6KpRUVK-voAUIU9xfa1Qvii0AJBUSh8FObn6OzcvFyM_EgAnNW2M8Srqky_0pgP5TVzIU05RcYfSt_XEjVfVNi3gpPT0kXpLOxvVW5tlYWGBnn1wQJQkVZZG_Cs86CgMWiTGyhveUUiTPbKwV1y18UnwzBXmnMXGFNXebD_qExPiQ_Q4zSLGVcdSUK5KNoPCol2uNX9CWCly6K_q7xFeanSDzD_Ul8-jHuzYXFgvLoTN-fhbHIuNcQ4RVbStmpdfV7TbncdCRj_8z6aUY8hWwtJttMOjAHI-0-3xe7V5XboXZMMyIg5QjsSRMisafNNAf9oKuQ3hUI2BidQNnx8-q88X97K-7FSEOd726rSbXXsBV7_Sht-_pjDDSpqcLJc2ejLnMbyLBIafhlIltrZvi_RWQdG8wAuTw2_nT1zEPSD70wo14Pm2nzU_c_F4RUWPuYBM1PX1YFh0rI3Sf_pAHhcNMgMnXCg9Tckl6SsKn6kwoAlFQ6OfmJmlcywD1bv2vMVpPAoSI-KWs1F9BGxBcEBf7uAExkXJnaOUHp2bWTi94AyidwwGCDKDyczqOAD1f_ckqD1DAg9GYmDC7VoB4UOzfCHVK2MsLR2C6_6AVZNuqKUR0jhE1oGI5nWnpKLZ5OQsKVWE2G3LMFCNUj_KIWPStjXIJ-YiDtgBRXhBtPSs-rf_rNHhZBW6P1Ogt4bUAgIh6izjHcNmarM_5To3ZoDBEn8c3GzZPdfTzTyvYSQJwWN6D-9W4SELBhc8-XrTRjMsZ6kI7MiBZUemJOLtFrbjRh0q58XiKkWMg1K4FYa-vJDYlMkyX1-CYm4G3xJODWWE0y8ZaZ30Bkn0k1g_eyTTG33biEjiqOXs2CmtlnuSNli_niBoDWZmPV09vtVBhlKL2a0MQvmyo3I3ryDii40sqK0Oos75NLyvI3BAotPotJhloEHFAPeb7cPg4RbM1vNQTpZwx1OQsQcfsZN934uZLfzC-5HvDSl0Lscm8_Qk08xW4nhhCyhWdDJ3FbavluxcBgmpAHwRkI02nYUeNZFBTed_fIM6Idw0B-IPa0OKMY_eQ1UGlfUrljjtYO7jaXDo_1cimsNzSvp4rB9k91gpL-6EwM; path=/; domain=.itwebapps.grinnell.edu;'
 
-    data = open("https://itwebapps.grinnell.edu/private/asp/campusdirectory/GCdefault.asp?transmit=true&blackboardref=&LastName=#{attri_params[:lastName]}&LNameSearch=startswith&FirstName=#{attri_params[:firstName]}&FNameSearch=startswith&email=#{attri_params[:email]}&campusphonenumber=#{attri_params[:campusPhone]}&campusquery=&Homequery=&Department=#{attri_params[:facultyDepartment]}&Major=#{attri_params[:major]}&conc=#{attri_params[:concentration]}&SGA=#{attri_params[:sga]}&Hiatus=#{attri_params[:hiatus]}&Gyear=#{attri_params[:studentClass]}\&submit_search=Search",
+    newhash = {}
+    attri_params.each { |_x, y| y&.gsub!(/\s+/, '+') }
+    puts attri_params[:campusquery]
+    data = open("https://itwebapps.grinnell.edu/private/asp/campusdirectory/GCdefault.asp?transmit=true&blackboardref=&LastName=#{attri_params[:lastName]}&LNameSearch=startswith&FirstName=#{attri_params[:firstName]}&FNameSearch=startswith&email=#{attri_params[:email]}&campusphonenumber=#{attri_params[:campusPhone]}&campusquery=#{attri_params[:campusquery]}&Homequery=#{attri_params[:homeAddress]}&Department=#{attri_params[:facultyDepartment]}&Major=#{attri_params[:major]}&conc=#{attri_params[:concentration]}&SGA=#{attri_params[:sga]}&Hiatus=#{attri_params[:hiatus]}&Gyear=#{attri_params[:studentClass]}\&submit_search=Search",
                 'Cookie' => c,
                 'User-Agent' => 'Mozilla/5.0',
                 'Referer' => 'https://login.microsoftonline.com/',
@@ -52,7 +55,10 @@ class FetchController < ApplicationController
         istext = true
       end
     end
-    # puts doc.at('span:contains("Pages")').text.strip
+    page = doc.at('span:contains("Pages")')
+    page = page.nil? ? '1' : page.text.strip.split.last
+    puts page
+    puts "\n\n\n\n\n\n\n\n"
     arr.map!(&:flatten)
 
     # return error if the person doesn't exist
@@ -95,6 +101,7 @@ class FetchController < ApplicationController
     # render data
     render json: {
       errMessage: '',
+      maximumPage: page,
       status: 200,
       content: users
     }
