@@ -2,21 +2,22 @@
 
 require 'open-uri'
 require 'net/http'
+require 'json'
 class FetchController < ApplicationController
   def fetch
-    raw_cookie = {
-      Name: 'acceptsCookies',
-      Value: 'accepts',
-      Host: 'www.edinburghnews.scotsman.com',
-      Path: '/',
-      Expires: 'Fri, 10 Oct 2025 16:53:34 GMT',
-      Secure: 'No',
-      HttpOnly: 'No'
-    }
-    c = '.AspNet.Cookies=Zk_1Bc4fu5ASjVhH8dLytkbjuZgaza-X8FH5frC11gXpoEqWvO3xt6maV4Gsz5gaqACphzj3RQitcVzYrlhDPYZto5BqKMho4r0M0jvoBcPllUFG4d4RY7oZXJNa4B7q0RSYVFN2UtExsbsit4jQgiA2A0vhMaanVEUsYxVrKemOtMa3-BaAIIS25HBVJ7uQKIFHro4yZ28MK5Wo-AlUR21vOhh4xQ1ZCItiL5mQDWvXbxEBjc_D010YVnQEMI4c5Fh-6NeJNk-Tydgrl0Di_kLRN4nVfWcCM-H6v_fWJE6AXqlDGmwUj05AQXAPaCGlZ9PFEPdAMUhh-KyvMsKv3uYFa_EAa2bIMcuemAu-fLOeSjQIk21DjRbfoPpJL3_f2VXwFnwQ7Ix4wDwbgCs9njJqn7vJfoh9dn7P1k4GNBLBwGH--UpOkdSM3Tu9emUFkGtsSCUwoyS3VnBo2TQfxA_Ok7Pim2aQygIxYoSgwoAdTd9hoRimxfDY8LGbCODmLC3uEvf95ZAydpZmXuEaGjIBf6PAnUIAXZxLvmdX8zB9QTC5hkPZnYYfBkINLDu9dqCsiws4tEW71jWhIW7oAnEftWOHZGvx_36puv8n8qyadwAfgIk96x9j9kPxoHZEmUAd6hwg1sdqcj3uTYErejT3E8SAndMy_nucZ2U3g2b0ZkpipUYjGqMiu6o32QKbwxf8eDtWtsnX4NIzdW_rQqE2FGkxUAoK_0soY4ZAUMmDred81W3zN9KuMQ_8mRDK2HGh77I2QLyB4b8ZSqwq_Fj40re8o7MlSaO_1d9j5QQcggQw3xzJuopOCr-RyHWcfCn5oek9xe4c5nfg9tGQ5jY6Zh7wYVmEmTpar2GxO7_wiVBq8D8oM-0xrSduqHGSN0x5_VppDuTRH7qCUh__3IsSkUZKAaflxd34JNOkFFsIInXsuCGUNg14xmUJPJlsu_ZhBYyyLSbJT5TaBGwIZLoRbStXPf0KrAUh3juEXuhttayJpEIFFqKstMa_hIljJJrXbJ1Kj8esIa9WqzcVE990j-KGFTEcoqfeWYHQbAEpsRt9cYRGdjia4mt4y3jBVB4NhUKHqGPXWMAuCkrWr4XnqsQhxuxginQrXjtYn4_OJe9UIy4mfYKl5v8Pa2uLSQocZkcnqU1ucxtmzLCNMtOR3qJfwhqBoHO0RgZiWUzlsAih6EVRwknd2DiK83SO1xBxrFG3R_AeVL3e1OnfQXOIDb7lI45nXycAAk2ue5hkjwzW1T9XFISCzBcsysIf4PJdRBv9SkCgzOjIShVtcjW0u7L5AnJGAPT4dbUFrpSwynyYiN8-TxVWsfMiI5B4wQQT9BXzE35Lpmfjp0OEDYqgNPslqHlzCk6h0Eh1tGDw6vurzl8yeTTDvR1tYdSnQaoDWpnQGc31lj4WGjVopi9wnXKZzdK9Nizz-YYi1Yk; path=/; domain=.itwebapps.grinnell.edu;'
-    cookie = raw_cookie.map { |b| b.collect { |key, val| format('%s=%s', key, val) }.join '; ' }.join '; '
-    # puts cookie
-    data = open('https://itwebapps.grinnell.edu/private/asp/campusdirectory/GCdefault.asp?transmit=true&blackboardref=&LastName=&LNameSearch=startswith&FirstName=&FNameSearch=startswith&email=&campusphonenumber=&campusquery=&Homequery=&Department=&Major=&conc=&SGA=Loosehead+Senator&Hiatus=&Gyear=&submit_search=Search',
+    # raw_cookie = {
+    #   Name: 'acceptsCookies',
+    #   Value: 'accepts',
+    #   Host: 'www.edinburghnews.scotsman.com',
+    #   Path: '/',
+    #   Expires: 'Fri, 10 Oct 2025 16:53:34 GMT',
+    #   Secure: 'No',
+    #   HttpOnly: 'No'
+    # }
+    # cookie = raw_cookie.map { |b| b.collect { |key, val| format('%s=%s', key, val) }.join '; ' }.join '; '
+    c = '.AspNet.Cookies=XBlvDMH0MIFV_93RM5ifieOthWG9okcSItqYs-XQ-_3xOwycaJb67XE_rLujKHZHwiR97OuCuhDp6EHYEwJmW15EZ2he3DoTcyJNmIuvcfCG29HKmYlvvnWmNGYrKN62S0eO37yODt52v7Wuhd-JQSJB4KQ_XlZnG8zV1FbAys6Ce7fe-JbsJJm5FhN5VNOhJva0EhdzyurMOona-qPZVDHJXfiY4dJifANFx7JRLrnVquVBoSeKPvrwFxsgdUaCGR2OIH-vvLdidW7RA7KUsPy0asjzNs3_dRyBP8xl5wPfk7o_MV5F_cquTXfklEWfN2Ss3hYLaJqFn6KpRUVK-voAUIU9xfa1Qvii0AJBUSh8FObn6OzcvFyM_EgAnNW2M8Srqky_0pgP5TVzIU05RcYfSt_XEjVfVNi3gpPT0kXpLOxvVW5tlYWGBnn1wQJQkVZZG_Cs86CgMWiTGyhveUUiTPbKwV1y18UnwzBXmnMXGFNXebD_qExPiQ_Q4zSLGVcdSUK5KNoPCol2uNX9CWCly6K_q7xFeanSDzD_Ul8-jHuzYXFgvLoTN-fhbHIuNcQ4RVbStmpdfV7TbncdCRj_8z6aUY8hWwtJttMOjAHI-0-3xe7V5XboXZMMyIg5QjsSRMisafNNAf9oKuQ3hUI2BidQNnx8-q88X97K-7FSEOd726rSbXXsBV7_Sht-_pjDDSpqcLJc2ejLnMbyLBIafhlIltrZvi_RWQdG8wAuTw2_nT1zEPSD70wo14Pm2nzU_c_F4RUWPuYBM1PX1YFh0rI3Sf_pAHhcNMgMnXCg9Tckl6SsKn6kwoAlFQ6OfmJmlcywD1bv2vMVpPAoSI-KWs1F9BGxBcEBf7uAExkXJnaOUHp2bWTi94AyidwwGCDKDyczqOAD1f_ckqD1DAg9GYmDC7VoB4UOzfCHVK2MsLR2C6_6AVZNuqKUR0jhE1oGI5nWnpKLZ5OQsKVWE2G3LMFCNUj_KIWPStjXIJ-YiDtgBRXhBtPSs-rf_rNHhZBW6P1Ogt4bUAgIh6izjHcNmarM_5To3ZoDBEn8c3GzZPdfTzTyvYSQJwWN6D-9W4SELBhc8-XrTRjMsZ6kI7MiBZUemJOLtFrbjRh0q58XiKkWMg1K4FYa-vJDYlMkyX1-CYm4G3xJODWWE0y8ZaZ30Bkn0k1g_eyTTG33biEjiqOXs2CmtlnuSNli_niBoDWZmPV09vtVBhlKL2a0MQvmyo3I3ryDii40sqK0Oos75NLyvI3BAotPotJhloEHFAPeb7cPg4RbM1vNQTpZwx1OQsQcfsZN934uZLfzC-5HvDSl0Lscm8_Qk08xW4nhhCyhWdDJ3FbavluxcBgmpAHwRkI02nYUeNZFBTed_fIM6Idw0B-IPa0OKMY_eQ1UGlfUrljjtYO7jaXDo_1cimsNzSvp4rB9k91gpL-6EwM; path=/; domain=.itwebapps.grinnell.edu;'
+
+    data = open("https://itwebapps.grinnell.edu/private/asp/campusdirectory/GCdefault.asp?transmit=true&blackboardref=&LastName=#{attri_params[:lastName]}&LNameSearch=startswith&FirstName=#{attri_params[:firstName]}&FNameSearch=startswith&email=#{attri_params[:email]}&campusphonenumber=#{attri_params[:campusPhone]}&campusquery=&Homequery=&Department=#{attri_params[:facultyDepartment]}&Major=#{attri_params[:major]}&conc=#{attri_params[:concentration]}&SGA=#{attri_params[:sga]}&Hiatus=#{attri_params[:hiatus]}&Gyear=#{attri_params[:studentClass]}\&submit_search=Search",
                 'Cookie' => c,
                 'User-Agent' => 'Mozilla/5.0',
                 'Referer' => 'https://login.microsoftonline.com/',
@@ -38,7 +39,7 @@ class FetchController < ApplicationController
             arr[i / 8] << getother(element)
           end
           i += 1
-        elsif element.attr('colspan') == '1' && !(element.text.strip == 160.chr('UTF-8') || element.text.strip == '-')
+        elsif element.attr('colspan') == '1'
           arr[(i - 1) / 8] << element.text.strip
         elsif element.attr('colspan') == '2'
           arr[(i - 1) / 8] << getother(element) if element.text.strip != ''
@@ -62,15 +63,40 @@ class FetchController < ApplicationController
       }
     end
     # convert the arr into a list of person
-    arr.map do |person|
+    users = []
+    arr.each do |p|
+      a = {
+        imgPath: p[0],
+        firstName: p[1].split(', ')[1],
+        lastName: p[1].split(', ')[0],
+        userName: p[2].split('=')[1],
+        major: p[3],
+        phone: p[4],
+        email: p[5],
+        address: p[6],
+        box: p[7],
+        type: p[8]
+      }
+      if p.length > 9
+        a['type'] = 'SGA'
+        a['SGAtitle'] = p[9]
+        a['SGAphone'] = p[10]
+        a['SGAemail'] = p[11]
+        a['SGAoffice'] = p[12]
+        a['SGAbox'] = p[13]
+      end
+      if a[:major].include?('(20')
+        a[:classYear] = a[:major].split(' (')[1][0, 4]
+        a[:major] = a[:major].split(' (')[0]
+      end
+      a['SGAofficeHour'] = p[14] if p.last.include?('Office Hours')
+      users << a
     end
     # render data
     render json: {
-      # errMessage: "",
-      # content: [{
-
-      # }]
-      haha: arr
+      errMessage: '',
+      status: 200,
+      content: users
     }
   end
 
@@ -90,5 +116,9 @@ class FetchController < ApplicationController
 
   def getother(noko)
     noko.text.strip
+  end
+
+  def attri_params
+    params.permit(:lastName, :firstName, :email, :campusPhone, :homeAddress, :facultyDepartment, :major, :concentration, :sga, :hiatus, :studentClass)
   end
 end
