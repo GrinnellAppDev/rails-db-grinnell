@@ -109,7 +109,7 @@ class FetchController < ApplicationController
         a['SGAoffice'] = p[12]
         a['SGAbox'] = p[13]
       end
-      if a[:major].include?('(20')
+      if a[:major]&.include?('(20')
         a[:classYear] = a[:major].split(' (')[1][0, 4]
         a[:major] = a[:major].split(' (')[0]
       end
