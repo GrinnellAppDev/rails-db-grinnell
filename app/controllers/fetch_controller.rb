@@ -93,7 +93,8 @@ class FetchController < ApplicationController
         phone: p[4],
         email: p[5],
         address: p[6],
-        box: p[7]
+        box: p[7],
+        type: p[8]
       }
       b = {
         type: p[8],
@@ -101,6 +102,7 @@ class FetchController < ApplicationController
       }
       if b[:type] == 'Faculty / Staff'
         a[:title] = p[3]
+        b[:type] = 'Faculty'
       else
         a[:major] = p[3]
       end
