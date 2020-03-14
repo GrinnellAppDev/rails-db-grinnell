@@ -30,7 +30,7 @@ class FetchController < ApplicationController
     # return if the cookie is expired
     if doc.at('p:contains("Your request for a directory entry at Grinnell College where")').nil?
       render json: {
-        errorMsg: 'Expired cookie',
+        errMessage: 'Expired cookie',
         status: 401
       }
       return
@@ -43,7 +43,7 @@ class FetchController < ApplicationController
     if toomany.nil? == false
       puts "\n\n\n\n"
       render json: {
-        errorMsg: 'found too many people, please narrow the range',
+        errMessage: 'found too many people, please narrow the range',
         status: 400,
         numberOfPeople: number_of_people
       }
@@ -122,7 +122,7 @@ class FetchController < ApplicationController
 
     # render data
     render json: {
-      errorMsg: '',
+      errMessage: '',
       numberOfPeople: number_of_people.nil? ? users.length : number_of_people,
       currentPage: current_page,
       maximumPage: page,
@@ -142,7 +142,7 @@ class FetchController < ApplicationController
     # check whether it is invalid
     if doc.at('p:contains("Invalid column name")') != nil
       render json: {
-        errorMsg: 'Invalid username',
+        errMessage: 'Invalid username',
         status: 400
       }
       return
@@ -150,7 +150,7 @@ class FetchController < ApplicationController
 
     if doc.at('h4:contains("Detailed Information as of")').nil?
       render json: {
-        errorMsg: 'cookie expired',
+        errMessage: 'cookie expired',
         status: 401
       }
       return
