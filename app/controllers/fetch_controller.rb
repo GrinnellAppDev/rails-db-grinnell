@@ -90,13 +90,17 @@ class FetchController < ApplicationController
         firstName: p[1].split(', ')[1],
         lastName: p[1].split(', ')[0],
         userName: p[2].split('=')[1],
-        major: p[3],
         phone: p[4],
         email: p[5],
         address: p[6],
         box: p[7],
         type: p[8]
       }
+      if a[:type] == 'Faculty / Staff'
+        x[:title] = p[3]
+      else
+        x[:major] = p[3]
+      end
       if p.length > 9
         a['type'] = 'SGA'
         a['SGAtitle'] = p[9]
@@ -111,12 +115,6 @@ class FetchController < ApplicationController
       end
       a['SGAofficeHour'] = p[14] if p.last.include?('Office Hours')
       users << a
-    end
-    users.each do |x|
-      if x[:type] == 'Faculty / Staff'
-        x[:title] = x[:major]
-        x[:major] = nil
-      end
     end
     # for each user, go to their info page to retrive their data
 
