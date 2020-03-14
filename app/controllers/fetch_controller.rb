@@ -97,9 +97,9 @@ class FetchController < ApplicationController
         type: p[8]
       }
       if a[:type] == 'Faculty / Staff'
-        x[:title] = p[3]
+        a[:title] = p[3]
       else
-        x[:major] = p[3]
+        a[:major] = p[3]
       end
       if p.length > 9
         a['type'] = 'SGA'
