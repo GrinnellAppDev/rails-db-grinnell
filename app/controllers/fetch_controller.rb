@@ -113,7 +113,9 @@ class FetchController < ApplicationController
         a[:classYear] = a[:major].split(' (')[1][0, 4]
         a[:major] = a[:major].split(' (')[0]
       end
-      a['SGAofficeHour'] = p[14] if p.last.include?('Office Hours')
+      a['SGAofficeHour'] = p[15] if p.last.include?('Office Hours')
+      puts p
+      puts "\n\n\n\n\n"
       users << a
     end
     # for each user, go to their info page to retrive their data
@@ -180,9 +182,9 @@ class FetchController < ApplicationController
     person = {}
     key_arr.each_with_index do |x, y|
       if x != ':'
-        person[x] = value_arr[y]
+        person[x[0, (x.length - 1)]] = value_arr[y]
       else
-        person[key_arr[y - 1]] += value_arr[y]
+        person[key_arr[y - 1][0, (key_arr[y - 1].length - 1)]] += value_arr[y]
       end
     end
     render json: person
