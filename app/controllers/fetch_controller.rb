@@ -123,9 +123,9 @@ class FetchController < ApplicationController
     # render data
     render json: {
       errMessage: '',
-      numberOfPeople: number_of_people.nil? ? users.length : number_of_people,
-      currentPage: current_page,
-      maximumPage: page,
+      numberOfPeople: number_of_people.nil? ? users.length : number_of_people.to_i,
+      currentPage: current_page.to_i,
+      maximumPage: page.to_i,
       status: 200,
       content: users
     }
