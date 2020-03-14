@@ -126,11 +126,49 @@ class FetchController < ApplicationController
     }
   end
 
-  private
+  def fetch_personal_info
+    c = ".AspNet.Cookies=#{personal_info_params[:token]}; path=/; domain=.itwebapps.grinnell.edu;"
+    data = open("https://itwebapps.grinnell.edu/private/asp/campusdirectory/GCdisplaydata.asp?SomeKindofNumber=#{personal_info_params[:username]}",
+                'Cookie' => c,
+                'User-Agent' => 'Mozilla/5.0',
+                'Referer' => 'https://login.microsoftonline.com/',
+                'Origin' => 'https://login.microsoftonline.com').read
+    doc = Nokogiri::HTML(data)
+    all_td = doc.css('td').map { |x| x.text.strip }
+    i = 0
+    actual_text = false
+    arr = []
+    all_td.each do |x|
+      if actual_text
+        arr << x
+      else
+        puts x
+        actual_text = true if x == 'On-Line Campus Directory '
+      end
+    end
+    arr = arr[4...(arr.length - 3)]
+    key_arr = []
+    value_arr = []
+    arr.each_with_index do |ele, index|
+      if index.even?
+        key_arr << ele
+      else
+        value_arr << ele
+      end
+    end
 
-  def fetch_personal_info(_coockie, _somekindofnumber)
-    1
+    person = {}
+    key_arr.each_with_index do |x, y|
+      if x != ':'
+        person[x] = value_arr[y]
+      else
+        person[key_arr[y - 1]] += value_arr[y]
+      end
+    end
+    render json: person
   end
+
+  private
 
   def get_picture(noko)
     if noko.at_css('img').nil?
@@ -150,5 +188,9 @@ class FetchController < ApplicationController
 
   def attri_params
     params.permit(:lastName, :firstName, :email, :campusPhone, :homeAddress, :facultyDepartment, :major, :concentration, :sga, :hiatus, :studentClass, :token, :campusquery, :page)
+  end
+
+  def personal_info_params
+    params.permit(:username, :token)
   end
 end
