@@ -122,7 +122,13 @@ class FetchController < ApplicationController
       users << b
     end
     # for each user, go to their info page to retrive their data
-
+    if users.nil?
+      render json: {
+        errMessage: 'No Such Person',
+        status: 402
+      }
+      return
+    end
     # render data
     render json: {
       errMessage: '',
