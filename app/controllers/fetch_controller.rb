@@ -137,6 +137,23 @@ class FetchController < ApplicationController
                 'Referer' => 'https://login.microsoftonline.com/',
                 'Origin' => 'https://login.microsoftonline.com').read
     doc = Nokogiri::HTML(data)
+    # check whether it is invalid
+    if doc.at('p:contains("Invalid column name")') != nil
+      render json: {
+        errorMsg: 'Invalid username',
+        errorCode: 400
+      }
+      return
+    end
+
+    if doc.at('h4:contains("Detailed Information as of")').nil?
+      render json: {
+        errorMsg: 'cookie expired',
+        errorCode: 401
+      }
+      return
+    end
+
     all_td = doc.css('td').map { |x| x.text.strip }
     i = 0
     actual_text = false
