@@ -79,7 +79,7 @@ class FetchController < ApplicationController
     end
     page_num = doc.at('span:contains("Pages")')
     page = page_num.nil? ? '1' : page_num.text.strip.split.last
-    current_page = page == 1 ? 1 : page_num.text.match(/\(.*\)/).to_s[1]
+    current_page = page == '1' ? '1' : page_num.text.match(/\(.*\)/).to_s[1]
     arr.map!(&:flatten)
 
     # convert the arr into a list of person
@@ -112,7 +112,12 @@ class FetchController < ApplicationController
       a['SGAofficeHour'] = p[14] if p.last.include?('Office Hours')
       users << a
     end
-
+    users.each do |x|
+      if x[:type] == 'Faculty / Staff'
+        x[:title] = x[:major]
+        x[:major] = nil
+      end
+    end
     # for each user, go to their info page to retrive their data
 
     # render data
