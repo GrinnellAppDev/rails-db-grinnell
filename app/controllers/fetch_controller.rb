@@ -19,7 +19,7 @@ class FetchController < ApplicationController
 
     attri_params.each { |_x, y| y&.gsub!(/\s+/, '+') }
     puts attri_params[:campusquery]
-    data = open("https://itwebapps.grinnell.edu/private/asp/campusdirectory/GCdefault.asp?transmit=true&blackboardref=&LastName=#{attri_params[:lastName]}&LNameSearch=startswith&FirstName=#{attri_params[:firstName]}&FNameSearch=startswith&email=#{attri_params[:email]}&campusphonenumber=#{attri_params[:campusPhone]}&campusquery=#{attri_params[:campusquery]}&Homequery=#{attri_params[:homeAddress]}&Department=#{attri_params[:facultyDepartment]}&Major=#{attri_params[:major]}&conc=#{attri_params[:concentration]}&SGA=#{attri_params[:sga]}&Hiatus=#{attri_params[:hiatus]}&Gyear=#{attri_params[:studentClass]}\&submit_search=Search",
+    data = open("https://itwebapps.grinnell.edu/private/asp/campusdirectory/GCdefault.asp?transmit=true&blackboardref=&LastName=#{attri_params[:lastName]}&LNameSearch=startswith&FirstName=#{attri_params[:firstName]}&FNameSearch=startswith&email=#{attri_params[:email]}&campusphonenumber=#{attri_params[:campusPhone]}&campusquery=#{attri_params[:campusquery]}&Homequery=#{attri_params[:homeAddress]}&Department=#{attri_params[:facultyDepartment]}&Major=#{attri_params[:major]}&conc=#{attri_params[:concentration]}&SGA=#{attri_params[:sga]}&Hiatus=#{attri_params[:hiatus]}&Gyear=#{attri_params[:studentClass]}\&submit_search=Search&pagenum=#{attri_params[:page]}",
                 'Cookie' => c,
                 'User-Agent' => 'Mozilla/5.0',
                 'Referer' => 'https://login.microsoftonline.com/',
@@ -27,6 +27,29 @@ class FetchController < ApplicationController
 
     doc = Nokogiri::HTML(data)
     arr = []
+    # return if the cookie is expired
+    if doc.at('p:contains("Your request for a directory entry at Grinnell College where")').nil?
+      render json: {
+        errorMsg: 'Expired cookie',
+        errorCode: 401
+      }
+      return
+    end
+    # get the number of people
+    doc_people = doc.at('p:contains("Your request for a directory entry at Grinnell College where")').text.strip
+    number_of_people = doc_people.match(/found\s\d+\sentries/).to_s.split(' ')[1]
+    # check whether the server think it is too many people to display
+    toomany = doc.at('p:contains("large number of records and you must reduce the number of matches by refining your search criteria using the form at the bottom of the page")')
+    if toomany.nil? == false
+      puts "\n\n\n\n"
+      render json: {
+        errorMsg: 'found too many people, please narrow the range',
+        errorCode: 400,
+        numberOfPeople: number_of_people
+      }
+      return
+    end
+
     comp = 'On Campus ViewUsers may not send anonymous mail, mail with altered headers giving erroneous information, or anonymous files.'
     istext = false
     i = 0
@@ -54,10 +77,9 @@ class FetchController < ApplicationController
         istext = true
       end
     end
-    page = doc.at('span:contains("Pages")')
-    page = page.nil? ? '1' : page.text.strip.split.last
-    puts page
-    puts "\n\n\n\n\n\n\n\n"
+    page_num = doc.at('span:contains("Pages")')
+    page = page_num.nil? ? '1' : page_num.text.strip.split.last
+    current_page = page == 1 ? 1 : page_num.text.match(/\(.*\)/).to_s[1]
     arr.map!(&:flatten)
 
     # convert the arr into a list of person
@@ -96,6 +118,8 @@ class FetchController < ApplicationController
     # render data
     render json: {
       errMessage: '',
+      numberOfPeople: number_of_people,
+      currentPage: current_page,
       maximumPage: page,
       status: 200,
       content: users
@@ -125,6 +149,6 @@ class FetchController < ApplicationController
   end
 
   def attri_params
-    params.permit(:lastName, :firstName, :email, :campusPhone, :homeAddress, :facultyDepartment, :major, :concentration, :sga, :hiatus, :studentClass, :token)
+    params.permit(:lastName, :firstName, :email, :campusPhone, :homeAddress, :facultyDepartment, :major, :concentration, :sga, :hiatus, :studentClass, :token, :campusquery, :page)
   end
 end
