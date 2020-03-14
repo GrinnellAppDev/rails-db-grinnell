@@ -93,16 +93,19 @@ class FetchController < ApplicationController
         phone: p[4],
         email: p[5],
         address: p[6],
-        box: p[7],
-        type: p[8]
+        box: p[7]
       }
-      if a[:type] == 'Faculty / Staff'
+      b = {
+        type: p[8],
+        person: a
+      }
+      if b[:type] == 'Faculty / Staff'
         a[:title] = p[3]
       else
         a[:major] = p[3]
       end
       if p.length > 9
-        a['type'] = 'SGA'
+        b['type'] = 'SGA'
         a['SGAtitle'] = p[9]
         a['SGAphone'] = p[10]
         a['SGAemail'] = p[11]
@@ -116,7 +119,7 @@ class FetchController < ApplicationController
       a['SGAofficeHour'] = p[15] if p.last.include?('Office Hours')
       puts p
       puts "\n\n\n\n\n"
-      users << a
+      users << b
     end
     # for each user, go to their info page to retrive their data
 
