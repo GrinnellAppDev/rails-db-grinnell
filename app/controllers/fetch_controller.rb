@@ -15,7 +15,7 @@ class FetchController < ApplicationController
     #   HttpOnly: 'No'
     # }
     # cookie = raw_cookie.map { |b| b.collect { |key, val| format('%s=%s', key, val) }.join '; ' }.join '; '
-    c = '.AspNet.Cookies=kK-lB278P_jUWKdeghTuRIXdGaAR7EKN6H7Jp1GM3gluhTG1muq_B6yqrAU8xesnq7uhKS9GDJsZYnEXwTSnOf2ZgNggcXIF-YHuuMmln-fTjVyvVpSSkEYEwHfu32Li_wnJUMtGVmBcMUxi6gPIl13LhGpDamYNwLVMC8Hj2v5sV6q8IHq8R0i2UBTbHc9IqVwyFJmBrlY5Pz6unUz4qiePj7zGgCNVzpZNt4mQdwQ3wHPg0LHNxsMyKx4yij2UoAkZLdT9v4EOfQ97T9W6Sz9KEno9qY11PDcRau3kNZWY8ooy33Qga7jwDPk901kVYkLylk9XFuwmZNTh_AXi86ityIYpuqavW1Q0R4ziMoBVptPEYxFFf3g1vdPpVzdaKt_ngS8BapHHlObT7fgVYAFAbnd3e8YDY4MWdr61jHsncfZkeeOAoKNWeejAEhZlL_vI9fx4uju7Rx70R1Ib0iaJM6ShK3cx-n8TX9VAvxnQTK5frYgbqG3-TZr3irtnYgz4VE54f--HaRE0npg3oIVC4obLX6aAxIrwz4JkYUS9KIPfmiEV3HWBN0GpaQzFpDBGPCOrTw6bhpbzBK5UBFfCgg11viCF6bkBMy1wBfNP3CZemc0GSxBT2M3eMTHLDGzoJKyiQq9AhxmNWOmq11oXACaCYwt-oyhkRrG7y7TnAHczwHQl6kz0-HXycFgI3DkbwO8Lnl892PF3ia2F7Al-H8QuLhBFKDkRkfV20X-1deLBc_sH6NpLma6BXwIMOqbREoOn8piqE0QFYE4J_dwRGKPsT47ieW8F13vwKSXODfKJgI9rjHz9Wx8JWrw7ljMA5YlT3XznWu6mSmTNK2dNIhTJgsbXjTrUVI7btK2Q7m9U5RdomSbRgLLeCzFSK9OilhswdudVkBNyhuiQktwmzND8JRoeJBQ5e9fovCFLLy_zMf0SQsX0q7qZDOwr5T2QFD0Y9B2Eg4eyYWeF2nfXvEJWWZD-uhUKHGJGc57CxQEM1Vyt8tLhGLlD1_VCcj659t7iG87Fdfhx7tprb9hQmhsRFgZSK2fwR2Trbdxo0PmgZ7e3AJ1IjqYQXI2FH81ObEnxJno29G17sgf04fo-TGE9EiCImp_RcHbnLwX0KojWsZ_aE2tXRqM6bAd45PstfXx4VFKgJBu8B7HqvVJeagX1D2U5ren92aAS3Gqy2NSjM_movNkDP1KnPSc4aW2lPbrIHgr1WCn7VN0SqzmI8JKfmS2wI7imSXUYr-k1zyZNspw4X3pXv869nzuDPCRlCm2VMkYtLgm8HzL23IiRYoaxXFitc_8gQkPWJcsUeJIylZrx3jpLSOwl-mdnzZYk7ho9RYDVdA00hQxLBdH0prC6xaVnNo3L6_yuPWcusCPzBx-NHfWrGYsCwVfJCAnwN4NTlgu56RV7tPcHwYZH8n-D4zqEabvcQprBiKA; path=/; domain=.itwebapps.grinnell.edu;'
+    c = ".AspNet.Cookies=#{attri_params[:token]}; path=/; domain=.itwebapps.grinnell.edu;"
 
     attri_params.each { |_x, y| y&.gsub!(/\s+/, '+') }
     puts attri_params[:campusquery]
@@ -90,6 +90,9 @@ class FetchController < ApplicationController
       a['SGAofficeHour'] = p[14] if p.last.include?('Office Hours')
       users << a
     end
+
+    # for each user, go to their info page to retrive their data
+
     # render data
     render json: {
       errMessage: '',
@@ -100,6 +103,10 @@ class FetchController < ApplicationController
   end
 
   private
+
+  def fetch_personal_info(_coockie, _somekindofnumber)
+    1
+  end
 
   def get_picture(noko)
     if noko.at_css('img').nil?
@@ -118,6 +125,6 @@ class FetchController < ApplicationController
   end
 
   def attri_params
-    params.permit(:lastName, :firstName, :email, :campusPhone, :homeAddress, :facultyDepartment, :major, :concentration, :sga, :hiatus, :studentClass)
+    params.permit(:lastName, :firstName, :email, :campusPhone, :homeAddress, :facultyDepartment, :major, :concentration, :sga, :hiatus, :studentClass, :token)
   end
 end
