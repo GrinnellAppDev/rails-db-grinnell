@@ -16,7 +16,7 @@ class FetchController < ApplicationController
     # }
     # cookie = raw_cookie.map { |b| b.collect { |key, val| format('%s=%s', key, val) }.join '; ' }.join '; '
     c = ".AspNet.Cookies=#{attri_params[:token]}; path=/; domain=.itwebapps.grinnell.edu;"
-
+    puts "\n\n\n\n\n"
     attri_params.each { |_x, y| y&.gsub!(/\s+/, '+') }
     puts attri_params[:campusquery]
     data = open("https://itwebapps.grinnell.edu/private/asp/campusdirectory/GCdefault.asp?transmit=true&blackboardref=&LastName=#{attri_params[:lastName]}&LNameSearch=startswith&FirstName=#{attri_params[:firstName]}&FNameSearch=startswith&email=#{attri_params[:email]}&campusphonenumber=#{attri_params[:campusPhone]}&campusquery=#{attri_params[:campusquery]}&Homequery=#{attri_params[:homeAddress]}&Department=#{attri_params[:facultyDepartment]}&Major=#{attri_params[:major]}&conc=#{attri_params[:concentration]}&SGA=#{attri_params[:sga]}&Hiatus=#{attri_params[:hiatus]}&Gyear=#{attri_params[:studentClass]}\&submit_search=Search&pagenum=#{attri_params[:page]}",
@@ -121,7 +121,7 @@ class FetchController < ApplicationController
     # render data
     render json: {
       errMessage: '',
-      numberOfPeople: number_of_people,
+      numberOfPeople: number_of_people.nil? ? users.length : number_of_people,
       currentPage: current_page,
       maximumPage: page,
       status: 200,
