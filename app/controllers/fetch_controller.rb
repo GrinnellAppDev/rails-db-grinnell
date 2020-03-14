@@ -103,6 +103,7 @@ class FetchController < ApplicationController
       if b[:type] == 'Faculty / Staff'
         a[:title] = p[3]
         b[:type] = 'Faculty'
+        b[:person][:type] = "Faculty"
       else
         a[:major] = p[3]
       end
