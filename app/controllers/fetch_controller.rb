@@ -97,8 +97,8 @@ class FetchController < ApplicationController
         type: p[8]
       }
       if a[:type] == 'Faculty / Staff'
-        a[:title] = p[3]
-        a[:type] = 'Faculty'
+        a[:title] = p[3].split('+')[0]
+        a[:department] = p[3].split('+')[1].strip
         a[:type] = 'Faculty'
       else
         a[:major] = p[3]
@@ -165,7 +165,6 @@ class FetchController < ApplicationController
     end
 
     all_td = doc.css('td').map { |x| x.text.strip }
-    i = 0
     actual_text = false
     arr = []
     all_td.each do |x|
@@ -213,7 +212,13 @@ class FetchController < ApplicationController
   end
 
   def getother(noko)
-    noko.text.strip
+    if noko.css('div')[0].nil?
+      noko.text.strip
+    else
+      title = noko.css('div')[0].text.strip
+      name = noko.text.strip[0...(noko.text.strip.length - title.length)]
+      title + '+' + name
+    end
   end
 
   def attri_params
