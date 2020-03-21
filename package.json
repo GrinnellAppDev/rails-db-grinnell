@@ -1,5 +1,13 @@
 {
   "name": "rails-db-grinnell",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "express-cli": "0.0.1",
+    "react": "^16.13.0"
+  },
+  "devDependencies": {
+    "express": "^4.17.1",
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
+  }
 }
